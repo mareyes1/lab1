@@ -1,39 +1,44 @@
 #!/bin/bash
 
-if [ $# -ne 1 ]; then #se verifica que se pase un solo argumento
-    echo "Uso: $0 <nombre_del_archivo>"
+# Verificar que se ha proporcionado un archivo como argumento
+if [ $# -ne 1 ]; then
+    echo "Uso: $0 <archivo>"
     exit 1
 fi
 
-archivo="$1" #se asigna archivo pasado como argumento a una variable
+archivo="$1"
 
-if [ ! -e "$archivo" ]; then #si archivo no existe imprime mensaje y devuelve codigo de error
-    echo "Error: El archivo '$archivo' pasado como parámetro no existe"
-    exit 2 #codigo de error para archivo inexistente
+# Verificar si el archivo existe
+if [ ! -e "$archivo" ]; then
+    echo "El archivo '$archivo' no existe."
+    exit 2
 fi
 
-permisos=$(stat -c "%A" "$archivo") #si archivo existe se almacenan permsisos en variable
+# Obtener los permisos del archivo
+permisos=$(stat -c "%A" "$archivo")
 
+# Función para obtener permisos verbales
 get_permissions_verbose() {
-    local string_permisos="$1"
-    usuario="${string_permisos:1:3}"
-    grupo="${string_permisos:4:3}"
-    otros="${string_permisos:7:3}"
+    local permisos="$1"
+    usuario="${permisos:1:3}"
+    grupo="${permisos:4:3}"
+    otros="${permisos:7:3}"
 
     echo "Permisos del usuario: "
-    [ "$usuario:0:1" = "r" ] && echo "Lectura" || "No lectura"
-    [ "$usuario:1:1" = "w" ] && echo "Escritura" || "No escritura"
-    [ "$usuario:2:1" = "x" ] && echo "Ejecución" || "No ejecución"
+    [ "${usuario:0:1}" = "r" ] && echo "Leer" || echo "No leer"
+    [ "${usuario:1:1}" = "w" ] && echo "Escribir" || echo "No escribir"
+    [ "${usuario:2:1}" = "x" ] && echo "Ejecutar" || echo "No ejecutar"
 
     echo "Permisos del grupo: "
-    [ "$grupo:0:1" = "r" ] && echo "Lectura" || "No lectura"
-    [ "$grupo:1:1" = "w" ] && echo "Escritura" || "No escritura"
-    [ "$grupo:2:1" = "x" ] && echo "Ejecución" || "No ejecución"
+    [ "${grupo:0:1}" = "r" ] && echo "Leer" || echo "No leer"
+    [ "${grupo:1:1}" = "w" ] && echo "Escribir" || echo "No escribir"
+    [ "${grupo:2:1}" = "x" ] && echo "Ejecutar" || echo "No ejecutar"
 
     echo "Permisos de otros: "
-    [ "$otros:0:1" = "r" ] && echo "Lectura" || "No lectura"
-    [ "$otros:1:1" = "w" ] && echo "Escritura" || "No escritura"
-    [ "$otros:2:1" = "x" ] && echo "Ejecución" || "No ejecución"
+    [ "${otros:0:1}" = "r" ] && echo "Leer" || echo "No leer"
+    [ "${otros:1:1}" = "w" ] && echo "Escribir" || echo "No escribir"
+    [ "${otros:2:1}" = "x" ] && echo "Ejecutar" || echo "No ejecutar"
 }
 
+# Llamar a la función para obtener permisos verbales
 get_permissions_verbose "$permisos"
